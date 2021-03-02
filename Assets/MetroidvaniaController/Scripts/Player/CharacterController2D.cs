@@ -41,6 +41,13 @@ public class CharacterController2D : MonoBehaviour
 	private float jumpWallDistX = 0; //Distance between player and wall
 	private bool limitVelOnWallJump = false; //For limit wall jump distance with low fps
 
+	/// <summary>
+	/// Custom vars
+	/// </summary>
+	/// 
+	public KeyCode revertFlipKey = KeyCode.E, duckKey = KeyCode.F, blockKey = KeyCode.Q;
+	public bool airborn = false;
+
 	[Header("Events")]
 	[Space]
 
@@ -61,11 +68,31 @@ public class CharacterController2D : MonoBehaviour
 		if (OnLandEvent == null)
 			OnLandEvent = new UnityEvent();
 	}
-
+	void Update()
+    {
+		// Set animation blends
+		// Playeris airborn (jumping or falling)
+		if ( airborn  /*animator.GetCurrentAnimatorStateInfo(0).IsName("Airborn Blend")*/)
+		{
+			// Player is traveling up
+			if (m_Rigidbody2D.velocity.y > 0)
+			{
+				animator.SetFloat("AirbornBlend", 0);
+			}
+			else
+			{
+				// If we're not falling we want to change the blend value with 20 per second (0.05 seconds to blend) to get a smooth transition between going up and falling down
+				float newBlendValue = Mathf.MoveTowards(animator.GetFloat("AirbornBlend"), 1, 20 * Time.deltaTime);
+				animator.SetFloat("AirbornBlend", newBlendValue);
+			}
+		}
+	}
 
 	private void FixedUpdate()
 	{
+		// Was the player grounded last frame?
 		bool wasGrounded = m_Grounded;
+		// Set this variable to false (temporarily)
 		m_Grounded = false;
 
 		// The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
@@ -75,12 +102,13 @@ public class CharacterController2D : MonoBehaviour
 		{
 			if (colliders[i].gameObject != gameObject)
 				m_Grounded = true;
+				// If we are gorunded this frame and we were NOT grounded last frame it means we have landed
 				if (!wasGrounded )
 				{
 					OnLandEvent.Invoke();
 					if (!m_IsWall && !isDashing) 
 						particleJumpDown.Play();
-					canDoubleJump = true;
+					//canDoubleJump = true;
 					if (m_Rigidbody2D.velocity.y < 0f)
 						limitVelOnWallJump = false;
 				}
@@ -131,7 +159,7 @@ public class CharacterController2D : MonoBehaviour
 	}
 
 
-	public void Move(float move, bool jump, bool dash)
+	public void Move(float move, bool jump, bool dash, bool duck, bool block)
 	{
 		if (canMove) {
 			if (dash && canDash && !isWallSliding)
@@ -147,45 +175,60 @@ public class CharacterController2D : MonoBehaviour
 			//only control the player if grounded or airControl is turned on
 			else if (m_Grounded || m_AirControl)
 			{
-				if (m_Rigidbody2D.velocity.y < -limitFallSpeed)
-					m_Rigidbody2D.velocity = new Vector2(m_Rigidbody2D.velocity.x, -limitFallSpeed);
+
+				if (m_Rigidbody2D.velocity.y < -limitFallSpeed) m_Rigidbody2D.velocity = new Vector2(m_Rigidbody2D.velocity.x, -limitFallSpeed);
 				// Move the character by finding the target velocity
-				Vector3 targetVelocity = new Vector2(move * 10f, m_Rigidbody2D.velocity.y);
+				Vector3 targetVelocity = new Vector2(0, m_Rigidbody2D.velocity.y);
+				// Allow the player to move if we're neither attacking nor ducking.
+				if (!animator.GetBool("IsAttacking") && !animator.GetBool("IsDucking") && !animator.GetBool("IsBlocking") ) targetVelocity.x = move * 10f;
 				// And then smoothing it out and applying it to the character
 				m_Rigidbody2D.velocity = Vector3.SmoothDamp(m_Rigidbody2D.velocity, targetVelocity, ref velocity, m_MovementSmoothing);
 
 				// If the input is moving the player right and the player is facing left...
-				if (move > 0 && !m_FacingRight && !isWallSliding)
+				bool isReverting = Input.GetKey(revertFlipKey);
+				if (move > 0 && !isWallSliding && (!m_FacingRight && !isReverting || m_FacingRight && isReverting))
 				{
 					// ... flip the player.
 					Flip();
 				}
 				// Otherwise if the input is moving the player left and the player is facing right...
-				else if (move < 0 && m_FacingRight && !isWallSliding)
+				else if (move < 0 && !isWallSliding && (m_FacingRight && !isReverting || !m_FacingRight && isReverting))
 				{
 					// ... flip the player.
 					Flip();
 				}
 			}
 			// If the player should jump...
-			if (m_Grounded && jump)
+			if (m_Grounded)
 			{
-				// Add a vertical force to the player.
-				animator.SetBool("IsJumping", true);
-				animator.SetBool("JumpUp", true);
-				m_Grounded = false;
-				m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
-				canDoubleJump = true;
-				particleJumpDown.Play();
-				particleJumpUp.Play();
+				if(jump)
+				{
+					// Add a vertical force to the player.
+					animator.SetBool("IsJumping", true);
+					animator.SetBool("JumpUp", true);
+					m_Grounded = false;
+					m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
+					//canDoubleJump = true;
+					particleJumpDown.Play();
+					particleJumpUp.Play();
+				}
+				else if(duck)
+                {
+					animator.SetBool("IsDucking", true);
+                }
+				else if(block)
+                {
+					animator.SetBool("IsBlocking", true);
+                }
 			}
+			/* **** We don't need double jump *****
 			else if (!m_Grounded && jump && canDoubleJump && !isWallSliding)
 			{
 				canDoubleJump = false;
 				m_Rigidbody2D.velocity = new Vector2(m_Rigidbody2D.velocity.x, 0);
 				m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce / 1.2f));
 				animator.SetBool("IsDoubleJumping", true);
-			}
+			}*/
 
 			else if (m_IsWall && !m_Grounded)
 			{
@@ -250,7 +293,7 @@ public class CharacterController2D : MonoBehaviour
 	}
 
 
-	private void Flip()
+	public void Flip()
 	{
 		// Switch the way the player is labelled as facing.
 		m_FacingRight = !m_FacingRight;
