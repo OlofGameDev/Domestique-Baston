@@ -1,0 +1,208 @@
+{
+    "name": "PlayerController",
+    "maps": [
+        {
+            "name": "Player1",
+            "id": "42d151b5-d09e-41d2-817c-bccff811983e",
+            "actions": [
+                {
+                    "name": "AttackPunch",
+                    "type": "PassThrough",
+                    "id": "ccb3bb09-e4f3-4604-9db3-9688812cb98c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Hold,Press(behavior=1)"
+                },
+                {
+                    "name": "Walk",
+                    "type": "Value",
+                    "id": "d0a9cae0-97ba-4c8e-be0c-e3c5ac83e7ac",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "AttackKick",
+                    "type": "PassThrough",
+                    "id": "839d467f-0159-4b5f-88ad-20b614b56c3f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Hold,Press(behavior=1)"
+                },
+                {
+                    "name": "AttackRanged",
+                    "type": "PassThrough",
+                    "id": "9f132009-e830-4a34-b45b-8a07aa0a2182",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Hold,Press(behavior=1)"
+                },
+                {
+                    "name": "Block",
+                    "type": "Button",
+                    "id": "34b98994-190c-41ec-990e-130ce6f7dc06",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "06e27b0e-badc-4ca6-bca6-3f6852f54da8",
+                    "path": "<HID::Microntek              USB Joystick          >/button3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AttackPunch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "55762bcb-0021-4780-a24f-b7b87f327eb2",
+                    "path": "<Keyboard>/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AttackPunch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "42d46b83-e91e-4a45-bf52-b6b9f659f559",
+                    "path": "<HID::Microntek              USB Joystick          >/stick",
+                    "interactions": "",
+                    "processors": "NormalizeVector2",
+                    "groups": "",
+                    "action": "Walk",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "2D Vector",
+                    "id": "9e4b1bf1-1ad5-43e4-a08f-b72cb90886e5",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Walk",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "Up",
+                    "id": "d737a45b-8872-478f-aa97-8a33a8b7d8f3",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Walk",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Down",
+                    "id": "a53ac283-6631-488b-aa20-777550d12150",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Walk",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Left",
+                    "id": "2500b288-15ce-4843-b9d0-69c44d3aa204",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Walk",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Right",
+                    "id": "a389aa84-09e1-4890-b8cf-3a2de478880e",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Walk",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "2834eb37-d13a-4473-bbfc-8e4689600ab5",
+                    "path": "<HID::Microntek              USB Joystick          >/button4",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AttackKick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "624e535c-9c22-4656-bb7b-bde4b7303171",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AttackKick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "534c1145-06ec-48c0-9a90-4295413c17b1",
+                    "path": "<HID::Microntek              USB Joystick          >/button2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AttackRanged",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4cb52cf7-adb2-4a2f-9e11-a10864f0fdb3",
+                    "path": "<Keyboard>/v",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AttackRanged",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "531a11d9-4f58-4a2d-8fed-c450f3a69be4",
+                    "path": "<HID::Microntek              USB Joystick          >/trigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Block",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a44e8bf3-0866-4c67-a9ad-ddcd2d8f72a6",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Block",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

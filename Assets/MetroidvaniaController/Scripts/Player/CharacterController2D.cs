@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 
 public class CharacterController2D : MonoBehaviour
 {
@@ -13,9 +15,9 @@ public class CharacterController2D : MonoBehaviour
 	[SerializeField] private Transform m_WallCheck;								//Posicion que controla si el personaje toca una pared
 
 	const float k_GroundedRadius = .2f; // Radius of the overlap circle to determine if grounded
-	private bool m_Grounded;            // Whether or not the player is grounded.
+	[HideInInspector] public bool m_Grounded;            // Whether or not the player is grounded.
 	private Rigidbody2D m_Rigidbody2D;
-	private bool m_FacingRight = true;  // For determining which way the player is currently facing.
+	[HideInInspector] public bool m_FacingRight = true;  // For determining which way the player is currently facing.
 	private Vector3 velocity = Vector3.zero;
 	private float limitFallSpeed = 25f; // Limit fall speed
 
@@ -41,12 +43,15 @@ public class CharacterController2D : MonoBehaviour
 	private float jumpWallDistX = 0; //Distance between player and wall
 	private bool limitVelOnWallJump = false; //For limit wall jump distance with low fps
 
+	public PlayerInput playerInput;
+
 	/// <summary>
 	/// Custom vars
 	/// </summary>
 	/// 
 	public KeyCode revertFlipKey = KeyCode.E, duckKey = KeyCode.F, blockKey = KeyCode.Q;
-	public bool airborn = false;
+	[ HideInInspector] public bool airborn = false;
+	public Transform opponent;
 
 	[Header("Events")]
 	[Space]
@@ -184,15 +189,15 @@ public class CharacterController2D : MonoBehaviour
 				// And then smoothing it out and applying it to the character
 				m_Rigidbody2D.velocity = Vector3.SmoothDamp(m_Rigidbody2D.velocity, targetVelocity, ref velocity, m_MovementSmoothing);
 
-				// If the input is moving the player right and the player is facing left...
+				// Face the opponent (unless the revert button is pressed)
 				bool isReverting = Input.GetKey(revertFlipKey);
-				if (move > 0 && !isWallSliding && (!m_FacingRight && !isReverting || m_FacingRight && isReverting))
+				if (opponent.position.x > transform.position.x && !isWallSliding && (!m_FacingRight && !isReverting || m_FacingRight && isReverting))
 				{
 					// ... flip the player.
 					Flip();
 				}
 				// Otherwise if the input is moving the player left and the player is facing right...
-				else if (move < 0 && !isWallSliding && (m_FacingRight && !isReverting || !m_FacingRight && isReverting))
+				else if (opponent.position.x < transform.position.x && !isWallSliding && (m_FacingRight && !isReverting || !m_FacingRight && isReverting))
 				{
 					// ... flip the player.
 					Flip();
