@@ -53,6 +53,8 @@ public class CharacterController2D : MonoBehaviour
 	[ HideInInspector] public bool airborn = false;
 	public Transform opponent;
 
+	public bool isReverting;
+
 	[Header("Events")]
 	[Space]
 
@@ -185,12 +187,11 @@ public class CharacterController2D : MonoBehaviour
 				// Move the character by finding the target velocity
 				Vector3 targetVelocity = new Vector2(0, m_Rigidbody2D.velocity.y);
 				// Allow the player to move if we're neither attacking nor ducking.
-				if (!animator.GetBool("IsAttacking") && !animator.GetBool("IsDucking") && !animator.GetBool("IsBlocking") ) targetVelocity.x = move * 10f;
+				if (!animator.GetBool("IsAttacking") && !animator.GetBool("IsDucking") && !animator.GetBool("IsBlocking") && !animator.GetBool("IsJumping") ) targetVelocity.x = move * 10f;
 				// And then smoothing it out and applying it to the character
 				m_Rigidbody2D.velocity = Vector3.SmoothDamp(m_Rigidbody2D.velocity, targetVelocity, ref velocity, m_MovementSmoothing);
 
 				// Face the opponent (unless the revert button is pressed)
-				bool isReverting = Input.GetKey(revertFlipKey);
 				if (opponent.position.x > transform.position.x && !isWallSliding && (!m_FacingRight && !isReverting || m_FacingRight && isReverting))
 				{
 					// ... flip the player.
@@ -210,12 +211,11 @@ public class CharacterController2D : MonoBehaviour
 				{
 					// Add a vertical force to the player.
 					animator.SetBool("IsJumping", true);
-					animator.SetBool("JumpUp", true);
-					m_Grounded = false;
-					m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
+					//m_Grounded = false;
+					//m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
 					//canDoubleJump = true;
-					particleJumpDown.Play();
-					particleJumpUp.Play();
+					//particleJumpDown.Play();
+					//particleJumpUp.Play();
 				}
 				else if(duck)
                 {

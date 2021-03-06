@@ -23,7 +23,7 @@ public class PlayerMovement : MonoBehaviour {
 	Vector2 m_Move = Vector2.zero;
 
 	//bool dashAxis = false;
-
+	#region Called by input system
 	public void OnMove(InputAction.CallbackContext context)
 	{
 		m_Move = context.ReadValue<Vector2>();
@@ -32,16 +32,39 @@ public class PlayerMovement : MonoBehaviour {
 	{
 		if(context.performed) block = context.performed;
 	}
-	
+	public void OnJump(InputAction.CallbackContext context)
+	{
+		if (context.performed) jump = context.performed;
+	}
+	public void OnDuck(InputAction.CallbackContext context)
+	{
+		if (context.performed) duck = context.performed;
+	}
+	public void OnTurnAway(InputAction.CallbackContext context)
+    {
+		if(context.phase == InputActionPhase.Started && canFlip)
+        {
+			controller.isReverting = true;
+			StartCoroutine(ResetFlip());
+		}
+		else if(context.phase == InputActionPhase.Canceled)
+        {
+			controller.isReverting = false;
+		}
+	}
+    #endregion
 
-	// Update is called once per frame
-	void Update () {
+    // Update is called once per frame
+    void Update () {
 
 		horizontalMove = m_Move.x * runSpeed;
+
+		/* Old duck and jump
 		// If player is moving up, is grounded: jump is true
 		jump = m_Move.y > 0 && controller.m_Grounded ? true : false;
 		// If player is moving down, is grounded, jump is false: true 
 		duck = m_Move.y < 0 && controller.m_Grounded && !jump ? true : false;
+		*/
 
 		float absValue = Mathf.Abs(horizontalMove);
 		float animatorBlendValue;
@@ -83,12 +106,6 @@ public class PlayerMovement : MonoBehaviour {
 			animator.SetBool("IsBlocking", false);
 			animator.SetBool("IsDucking", false);
 		}
-		if(Input.GetKeyDown(KeyCode.E) && canFlip)
-        {
-			// Flip the character
-			//controller.Flip();
-			StartCoroutine(ResetFlip());
-        }
 		/*if (Input.GetKeyDown(KeyCode.C))
 		{
 			dash = true;

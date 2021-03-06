@@ -57,6 +57,30 @@ public class @PlayerController : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Duck"",
+                    ""type"": ""Button"",
+                    ""id"": ""c26788cd-72b4-47e2-94e4-21f7129ee5be"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Jump"",
+                    ""type"": ""Button"",
+                    ""id"": ""e269e619-53bb-413b-b3e5-e4794dd7656c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""TurnAway"",
+                    ""type"": ""Button"",
+                    ""id"": ""6f3d8655-1edd-4ddd-b89c-f23e3465a150"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -213,6 +237,72 @@ public class @PlayerController : IInputActionCollection, IDisposable
                     ""action"": ""Block"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0806de3a-eaf2-4663-9f5c-7439bd9af9c1"",
+                    ""path"": ""<HID::Microntek              USB Joystick          >/button7"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Duck"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""73ae70b9-21f5-41b6-b6e3-cc2ce9be8ef3"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Duck"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cc1cb88b-8c32-44dd-9bf9-1024947e70aa"",
+                    ""path"": ""<HID::Microntek              USB Joystick          >/button8"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d6219107-8c11-45bc-a99f-2ec41f203b63"",
+                    ""path"": ""<Keyboard>/z"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""422c99d8-4e8f-4e7e-ac10-1db52b3230f0"",
+                    ""path"": ""<HID::Microntek              USB Joystick          >/button5"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TurnAway"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""24c231fa-995e-4de0-8784-22d4a477ac3a"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TurnAway"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -226,6 +316,9 @@ public class @PlayerController : IInputActionCollection, IDisposable
         m_Player1_AttackKick = m_Player1.FindAction("AttackKick", throwIfNotFound: true);
         m_Player1_AttackRanged = m_Player1.FindAction("AttackRanged", throwIfNotFound: true);
         m_Player1_Block = m_Player1.FindAction("Block", throwIfNotFound: true);
+        m_Player1_Duck = m_Player1.FindAction("Duck", throwIfNotFound: true);
+        m_Player1_Jump = m_Player1.FindAction("Jump", throwIfNotFound: true);
+        m_Player1_TurnAway = m_Player1.FindAction("TurnAway", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -280,6 +373,9 @@ public class @PlayerController : IInputActionCollection, IDisposable
     private readonly InputAction m_Player1_AttackKick;
     private readonly InputAction m_Player1_AttackRanged;
     private readonly InputAction m_Player1_Block;
+    private readonly InputAction m_Player1_Duck;
+    private readonly InputAction m_Player1_Jump;
+    private readonly InputAction m_Player1_TurnAway;
     public struct Player1Actions
     {
         private @PlayerController m_Wrapper;
@@ -289,6 +385,9 @@ public class @PlayerController : IInputActionCollection, IDisposable
         public InputAction @AttackKick => m_Wrapper.m_Player1_AttackKick;
         public InputAction @AttackRanged => m_Wrapper.m_Player1_AttackRanged;
         public InputAction @Block => m_Wrapper.m_Player1_Block;
+        public InputAction @Duck => m_Wrapper.m_Player1_Duck;
+        public InputAction @Jump => m_Wrapper.m_Player1_Jump;
+        public InputAction @TurnAway => m_Wrapper.m_Player1_TurnAway;
         public InputActionMap Get() { return m_Wrapper.m_Player1; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -313,6 +412,15 @@ public class @PlayerController : IInputActionCollection, IDisposable
                 @Block.started -= m_Wrapper.m_Player1ActionsCallbackInterface.OnBlock;
                 @Block.performed -= m_Wrapper.m_Player1ActionsCallbackInterface.OnBlock;
                 @Block.canceled -= m_Wrapper.m_Player1ActionsCallbackInterface.OnBlock;
+                @Duck.started -= m_Wrapper.m_Player1ActionsCallbackInterface.OnDuck;
+                @Duck.performed -= m_Wrapper.m_Player1ActionsCallbackInterface.OnDuck;
+                @Duck.canceled -= m_Wrapper.m_Player1ActionsCallbackInterface.OnDuck;
+                @Jump.started -= m_Wrapper.m_Player1ActionsCallbackInterface.OnJump;
+                @Jump.performed -= m_Wrapper.m_Player1ActionsCallbackInterface.OnJump;
+                @Jump.canceled -= m_Wrapper.m_Player1ActionsCallbackInterface.OnJump;
+                @TurnAway.started -= m_Wrapper.m_Player1ActionsCallbackInterface.OnTurnAway;
+                @TurnAway.performed -= m_Wrapper.m_Player1ActionsCallbackInterface.OnTurnAway;
+                @TurnAway.canceled -= m_Wrapper.m_Player1ActionsCallbackInterface.OnTurnAway;
             }
             m_Wrapper.m_Player1ActionsCallbackInterface = instance;
             if (instance != null)
@@ -332,6 +440,15 @@ public class @PlayerController : IInputActionCollection, IDisposable
                 @Block.started += instance.OnBlock;
                 @Block.performed += instance.OnBlock;
                 @Block.canceled += instance.OnBlock;
+                @Duck.started += instance.OnDuck;
+                @Duck.performed += instance.OnDuck;
+                @Duck.canceled += instance.OnDuck;
+                @Jump.started += instance.OnJump;
+                @Jump.performed += instance.OnJump;
+                @Jump.canceled += instance.OnJump;
+                @TurnAway.started += instance.OnTurnAway;
+                @TurnAway.performed += instance.OnTurnAway;
+                @TurnAway.canceled += instance.OnTurnAway;
             }
         }
     }
@@ -343,5 +460,8 @@ public class @PlayerController : IInputActionCollection, IDisposable
         void OnAttackKick(InputAction.CallbackContext context);
         void OnAttackRanged(InputAction.CallbackContext context);
         void OnBlock(InputAction.CallbackContext context);
+        void OnDuck(InputAction.CallbackContext context);
+        void OnJump(InputAction.CallbackContext context);
+        void OnTurnAway(InputAction.CallbackContext context);
     }
 }
