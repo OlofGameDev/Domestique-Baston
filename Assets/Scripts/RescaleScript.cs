@@ -2,58 +2,46 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class OtherSpritesScaleClass
-{
-    [Tooltip("Transforms that have the same scale ratio can be added here.")]
-    public Transform[] sprites;
-    [Tooltip("Set the scale ratio compared to the Reference Sprite.")]
-    public float scaleRatioToReferenceSprite = 1;
-}
 public class RescaleScript : MonoBehaviour
 {
     [Tooltip("This is the object in the world that will be rescaled to fill the screens width. All pther game objects that are added will be set to the same scale")]
     public Transform referenceObject;
-    [Tooltip("These are the game objects that will be set to the same scale as the Reference Object.")]
-    public OtherSpritesScaleClass[] otherSprites;
+    [Tooltip("These are the player objects that will be scaled in proportion to the Reference Sprite.")]
+    public List<Transform> playerSprites = new List<Transform>();
+    [Tooltip("Set the scale ratio between the player objects compared to the Reference Sprite.")]
+    public float scaleRatioToReferenceSprite = 1;
     [Tooltip("UI elements to move to the top of the Reference Object")]
     public RectTransform player1Stats, player2Stats;
     [Tooltip("The canvas (or parent) of the player1Stats and player2Stats")]
     public RectTransform canvasRect;
 
-    public GameObject testingPrefab;
-    private GameObject boundsCenter, boundsCenterPlusExtends;
-    private int screenWidthLastFrame, screenHeightLastFrame;
+    private Vector2 screenSizeLastFrame;
     private SpriteRenderer referenceSprite;
     void Start()
     {
         referenceSprite = referenceObject.GetComponent<SpriteRenderer>();
-        screenWidthLastFrame = Screen.width;
-        screenHeightLastFrame = Screen.height;
+        screenSizeLastFrame = new Vector2(Screen.width, Screen.height);
         ScaleAll();
     }
     private void Update()
     {
-        int screenWidthThisFrame = Screen.width, screenHeightThisFrame = Screen.height; //Camera.main.pixelWidth
-        if (screenWidthThisFrame != screenWidthLastFrame || screenHeightThisFrame != screenHeightLastFrame)
+        Vector2 screenSizeThisFrame = new Vector2(Screen.width, Screen.height);
+        if (screenSizeThisFrame != screenSizeLastFrame)
         {
-            screenWidthLastFrame = screenWidthThisFrame;
-            screenHeightLastFrame = screenHeightThisFrame;
+            screenSizeLastFrame = screenSizeThisFrame;
             ScaleAll();
         }
         if (Input.GetKeyDown(KeyCode.Mouse0)) Debug.Log($"Mouse position is: {Input.mousePosition}");
     }
-    void ScaleAll()
+    public void ScaleAll()
     {
         float width = GetScreenToWorldWidth;
         referenceObject.localScale = Vector3.one * width;
-        for (int i = 0; i < otherSprites.Length; i++)
+        for (int i = 0; i < playerSprites.Count; i++)
         {
-            for (int j = 0; j < otherSprites[i].sprites.Length; j++)
-            {
-                otherSprites[i].sprites[j].localScale = Vector3.one * width * otherSprites[i].scaleRatioToReferenceSprite;
-            }
+                playerSprites[i].localScale = Vector3.one * width * scaleRatioToReferenceSprite;
         }
+
         SetAnchorStats(player1Stats, 1);
         SetAnchorStats(player2Stats, 2);
     }

@@ -12,7 +12,7 @@ public enum AttackType
 }
 public class Attack : MonoBehaviour
 {
-	public float dmgValue1 = 4, dmgValue2 = 3, dmgValue3 = 7;
+	public float dmgValue1 = 4, dmgValue2 = 3, dmgValue3 = 7, rangedDamage = 4;
 	private float currentDmgValue;
 	public GameObject throwableObject;
 	public Transform attackCheck;
@@ -27,7 +27,7 @@ public class Attack : MonoBehaviour
 
 	public InputAction moveAction;
 
-	private bool punch = false, kick = false, ranged = false;
+	[HideInInspector] public bool punch = false, kick = false, ranged = false;
 	public bool punchHeld = false, kickHeld = false, rangedHeld = false;
 
 	private void Awake()
@@ -60,7 +60,7 @@ public class Attack : MonoBehaviour
 					if (attackType == AttackType.PUNCH) punchHeld = true;
 					else if (attackType == AttackType.KICK) kickHeld = true;
 					else if (attackType == AttackType.RANGED) rangedHeld = true;
-					print($"{attackType.ToString().ToLowerInvariant()} started");
+					//print($"{attackType.ToString().ToLowerInvariant()} started");
 				}
 				else if (context.interaction is PressInteraction)
 				{
@@ -69,7 +69,7 @@ public class Attack : MonoBehaviour
 						if (attackType == AttackType.PUNCH) punch = true;
 						else if (attackType == AttackType.KICK) kick = true;
 						else if (attackType == AttackType.RANGED) ranged = true;
-						print($"{attackType.ToString().ToLowerInvariant()} pressed and attacking!");
+						//print($"{attackType.ToString().ToLowerInvariant()} pressed and attacking!");
 					}
 					else print($"{attackType.ToString().ToLowerInvariant()} pressed but can't attack!");
 
@@ -140,35 +140,44 @@ public class Attack : MonoBehaviour
 			}
 			else if (ranged)
 			{
-				// Not implemented
+				GroundedAttack(3, dmgValue2);
 			}
 			// Reset the bools
 			punch = kick = ranged = false;
 		}
 	}
-   
-
 	IEnumerator AttackCooldown()
 	{
 		//yield return new WaitForSeconds(0.25f);
 		yield return new WaitUntil( () => !animator.GetBool("IsAttacking"));
 		canAttack = true;
 	}
-
-	public void DoDashDamage()
+	public void ActivateRanged()
+    {
+		foreach(ParticleSystem p in controller.rangedPS)
+        {
+			p.GetComponent<ParticlesHitScript>().damage = rangedDamage;
+			p.Play();
+        }
+    }
+	public void DoDashDamage(AttackType attackType)
 	{
+		print("Do dach damage");
 		currentDmgValue = Mathf.Abs(dmgValue1);
-		Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(attackCheck.position, 0.9f);
+		Collider2D[] collidersEnemies = Physics2D.OverlapCircleAll(attackCheck.position, 0.2f);
 		for (int i = 0; i < collidersEnemies.Length; i++)
 		{
+			print(collidersEnemies[i].name + "found" );
 			if (collidersEnemies[i].gameObject.tag == "Player" && collidersEnemies[i].transform != transform)
 			{
-				if (collidersEnemies[i].transform.position.x - transform.position.x < 0)
+				print(collidersEnemies[i].name + "getting attacked");
+				/*if (collidersEnemies[i].transform.position.x - transform.position.x < 0)
 				{
 					currentDmgValue = -currentDmgValue;
-				}
-				collidersEnemies[i].gameObject.SendMessage("ApplyDamage", currentDmgValue);
-				cam.GetComponent<CameraFollow>().ShakeCamera();
+				}*/
+				//collidersEnemies[i].gameObject.SendMessage("ApplyDamage", currentDmgValue);
+				//cam.GetComponent<CameraFollow>().ShakeCamera();
+				collidersEnemies[i].transform.GetComponent<Health>().ApplyDamage(currentDmgValue, attackType);
 			}
 		}
 	}

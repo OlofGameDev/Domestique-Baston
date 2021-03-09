@@ -8,23 +8,24 @@ public class PlayerMovement : MonoBehaviour {
 
 	public CharacterController2D controller;
 	public Animator animator;
+	private Rigidbody2D RB;
 
 	public float runSpeed = 40f;
 
-	private bool canFlip = true;
+	[HideInInspector] public bool canFlip = true;
 
-	float horizontalMove = 0f;
-	bool jump = false;
-	bool duck = false;
-	bool dash = false;
-	bool block = false;
+	[HideInInspector] public float horizontalMove = 0f;
+	[HideInInspector] public bool jump, duck, dash, block;
 
 
-	Vector2 m_Move = Vector2.zero;
-
-	//bool dashAxis = false;
-	#region Called by input system
-	public void OnMove(InputAction.CallbackContext context)
+	[HideInInspector] public Vector2 m_Move = Vector2.zero;
+    private void Awake()
+    {
+		RB = GetComponent<Rigidbody2D>();
+    }
+    //bool dashAxis = false;
+    #region Called by input system
+    public void OnMove(InputAction.CallbackContext context)
 	{
 		m_Move = context.ReadValue<Vector2>();
 	}
@@ -56,7 +57,8 @@ public class PlayerMovement : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-
+		if (controller == null) return;
+		if (!controller.canMove) return;
 		horizontalMove = m_Move.x * runSpeed;
 
 		/* Old duck and jump
@@ -69,8 +71,8 @@ public class PlayerMovement : MonoBehaviour {
 		float absValue = Mathf.Abs(horizontalMove);
 		float animatorBlendValue;
 		// Player is facing right
-		if(controller.m_FacingRight)
-        {
+		if (controller.m_FacingRight)
+		{
 			// Player is walking forward direction
 			if (horizontalMove >= 0) animatorBlendValue = absValue;
 			// player is walking in the backing direction
@@ -80,10 +82,10 @@ public class PlayerMovement : MonoBehaviour {
 				//Move slower when walking backwards
 				horizontalMove *= .7f;
 			}
-        }
+		}
 		// Player is facing left
 		else
-        {
+		{
 			// Player is walking forward direction
 			if (horizontalMove < 0) animatorBlendValue = absValue;
 			// player is walking in the backing direction
@@ -105,7 +107,9 @@ public class PlayerMovement : MonoBehaviour {
 		{
 			animator.SetBool("IsBlocking", false);
 			animator.SetBool("IsDucking", false);
+			RigidBodySettings(true);
 		}
+		else RigidBodySettings(false);
 		/*if (Input.GetKeyDown(KeyCode.C))
 		{
 			dash = true;
@@ -124,9 +128,22 @@ public class PlayerMovement : MonoBehaviour {
 			dashAxis = false;
 		}
 		*/
-
 	}
-	private IEnumerator ResetFlip()
+	void RigidBodySettings(bool moving)
+    {
+		if(moving)
+		{
+			/*RB.constraints = RigidbodyConstraints2D.None;
+			RB.constraints = RigidbodyConstraints2D.FreezeRotation;*/
+			RB.mass = 1;
+		}
+		else
+        {
+			/*RB.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;*/
+			RB.mass = 10;
+		}
+    }
+	public IEnumerator ResetFlip()
     {
 		canFlip = false;
 		yield return new WaitForSeconds(0.25f);
@@ -147,6 +164,7 @@ public class PlayerMovement : MonoBehaviour {
 
 	void FixedUpdate ()
 	{
+		if (controller == null) return;
 		// Move our character
 		controller.Move(horizontalMove * Time.fixedDeltaTime, jump, dash, duck, block);
 		jump = false;

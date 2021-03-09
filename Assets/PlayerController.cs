@@ -15,7 +15,7 @@ public class @PlayerController : IInputActionCollection, IDisposable
     ""name"": ""PlayerController"",
     ""maps"": [
         {
-            ""name"": ""Player1"",
+            ""name"": ""Player"",
             ""id"": ""42d151b5-d09e-41d2-817c-bccff811983e"",
             ""actions"": [
                 {
@@ -309,16 +309,16 @@ public class @PlayerController : IInputActionCollection, IDisposable
     ],
     ""controlSchemes"": []
 }");
-        // Player1
-        m_Player1 = asset.FindActionMap("Player1", throwIfNotFound: true);
-        m_Player1_AttackPunch = m_Player1.FindAction("AttackPunch", throwIfNotFound: true);
-        m_Player1_Walk = m_Player1.FindAction("Walk", throwIfNotFound: true);
-        m_Player1_AttackKick = m_Player1.FindAction("AttackKick", throwIfNotFound: true);
-        m_Player1_AttackRanged = m_Player1.FindAction("AttackRanged", throwIfNotFound: true);
-        m_Player1_Block = m_Player1.FindAction("Block", throwIfNotFound: true);
-        m_Player1_Duck = m_Player1.FindAction("Duck", throwIfNotFound: true);
-        m_Player1_Jump = m_Player1.FindAction("Jump", throwIfNotFound: true);
-        m_Player1_TurnAway = m_Player1.FindAction("TurnAway", throwIfNotFound: true);
+        // Player
+        m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
+        m_Player_AttackPunch = m_Player.FindAction("AttackPunch", throwIfNotFound: true);
+        m_Player_Walk = m_Player.FindAction("Walk", throwIfNotFound: true);
+        m_Player_AttackKick = m_Player.FindAction("AttackKick", throwIfNotFound: true);
+        m_Player_AttackRanged = m_Player.FindAction("AttackRanged", throwIfNotFound: true);
+        m_Player_Block = m_Player.FindAction("Block", throwIfNotFound: true);
+        m_Player_Duck = m_Player.FindAction("Duck", throwIfNotFound: true);
+        m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
+        m_Player_TurnAway = m_Player.FindAction("TurnAway", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -365,64 +365,64 @@ public class @PlayerController : IInputActionCollection, IDisposable
         asset.Disable();
     }
 
-    // Player1
-    private readonly InputActionMap m_Player1;
-    private IPlayer1Actions m_Player1ActionsCallbackInterface;
-    private readonly InputAction m_Player1_AttackPunch;
-    private readonly InputAction m_Player1_Walk;
-    private readonly InputAction m_Player1_AttackKick;
-    private readonly InputAction m_Player1_AttackRanged;
-    private readonly InputAction m_Player1_Block;
-    private readonly InputAction m_Player1_Duck;
-    private readonly InputAction m_Player1_Jump;
-    private readonly InputAction m_Player1_TurnAway;
-    public struct Player1Actions
+    // Player
+    private readonly InputActionMap m_Player;
+    private IPlayerActions m_PlayerActionsCallbackInterface;
+    private readonly InputAction m_Player_AttackPunch;
+    private readonly InputAction m_Player_Walk;
+    private readonly InputAction m_Player_AttackKick;
+    private readonly InputAction m_Player_AttackRanged;
+    private readonly InputAction m_Player_Block;
+    private readonly InputAction m_Player_Duck;
+    private readonly InputAction m_Player_Jump;
+    private readonly InputAction m_Player_TurnAway;
+    public struct PlayerActions
     {
         private @PlayerController m_Wrapper;
-        public Player1Actions(@PlayerController wrapper) { m_Wrapper = wrapper; }
-        public InputAction @AttackPunch => m_Wrapper.m_Player1_AttackPunch;
-        public InputAction @Walk => m_Wrapper.m_Player1_Walk;
-        public InputAction @AttackKick => m_Wrapper.m_Player1_AttackKick;
-        public InputAction @AttackRanged => m_Wrapper.m_Player1_AttackRanged;
-        public InputAction @Block => m_Wrapper.m_Player1_Block;
-        public InputAction @Duck => m_Wrapper.m_Player1_Duck;
-        public InputAction @Jump => m_Wrapper.m_Player1_Jump;
-        public InputAction @TurnAway => m_Wrapper.m_Player1_TurnAway;
-        public InputActionMap Get() { return m_Wrapper.m_Player1; }
+        public PlayerActions(@PlayerController wrapper) { m_Wrapper = wrapper; }
+        public InputAction @AttackPunch => m_Wrapper.m_Player_AttackPunch;
+        public InputAction @Walk => m_Wrapper.m_Player_Walk;
+        public InputAction @AttackKick => m_Wrapper.m_Player_AttackKick;
+        public InputAction @AttackRanged => m_Wrapper.m_Player_AttackRanged;
+        public InputAction @Block => m_Wrapper.m_Player_Block;
+        public InputAction @Duck => m_Wrapper.m_Player_Duck;
+        public InputAction @Jump => m_Wrapper.m_Player_Jump;
+        public InputAction @TurnAway => m_Wrapper.m_Player_TurnAway;
+        public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
         public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(Player1Actions set) { return set.Get(); }
-        public void SetCallbacks(IPlayer1Actions instance)
+        public static implicit operator InputActionMap(PlayerActions set) { return set.Get(); }
+        public void SetCallbacks(IPlayerActions instance)
         {
-            if (m_Wrapper.m_Player1ActionsCallbackInterface != null)
+            if (m_Wrapper.m_PlayerActionsCallbackInterface != null)
             {
-                @AttackPunch.started -= m_Wrapper.m_Player1ActionsCallbackInterface.OnAttackPunch;
-                @AttackPunch.performed -= m_Wrapper.m_Player1ActionsCallbackInterface.OnAttackPunch;
-                @AttackPunch.canceled -= m_Wrapper.m_Player1ActionsCallbackInterface.OnAttackPunch;
-                @Walk.started -= m_Wrapper.m_Player1ActionsCallbackInterface.OnWalk;
-                @Walk.performed -= m_Wrapper.m_Player1ActionsCallbackInterface.OnWalk;
-                @Walk.canceled -= m_Wrapper.m_Player1ActionsCallbackInterface.OnWalk;
-                @AttackKick.started -= m_Wrapper.m_Player1ActionsCallbackInterface.OnAttackKick;
-                @AttackKick.performed -= m_Wrapper.m_Player1ActionsCallbackInterface.OnAttackKick;
-                @AttackKick.canceled -= m_Wrapper.m_Player1ActionsCallbackInterface.OnAttackKick;
-                @AttackRanged.started -= m_Wrapper.m_Player1ActionsCallbackInterface.OnAttackRanged;
-                @AttackRanged.performed -= m_Wrapper.m_Player1ActionsCallbackInterface.OnAttackRanged;
-                @AttackRanged.canceled -= m_Wrapper.m_Player1ActionsCallbackInterface.OnAttackRanged;
-                @Block.started -= m_Wrapper.m_Player1ActionsCallbackInterface.OnBlock;
-                @Block.performed -= m_Wrapper.m_Player1ActionsCallbackInterface.OnBlock;
-                @Block.canceled -= m_Wrapper.m_Player1ActionsCallbackInterface.OnBlock;
-                @Duck.started -= m_Wrapper.m_Player1ActionsCallbackInterface.OnDuck;
-                @Duck.performed -= m_Wrapper.m_Player1ActionsCallbackInterface.OnDuck;
-                @Duck.canceled -= m_Wrapper.m_Player1ActionsCallbackInterface.OnDuck;
-                @Jump.started -= m_Wrapper.m_Player1ActionsCallbackInterface.OnJump;
-                @Jump.performed -= m_Wrapper.m_Player1ActionsCallbackInterface.OnJump;
-                @Jump.canceled -= m_Wrapper.m_Player1ActionsCallbackInterface.OnJump;
-                @TurnAway.started -= m_Wrapper.m_Player1ActionsCallbackInterface.OnTurnAway;
-                @TurnAway.performed -= m_Wrapper.m_Player1ActionsCallbackInterface.OnTurnAway;
-                @TurnAway.canceled -= m_Wrapper.m_Player1ActionsCallbackInterface.OnTurnAway;
+                @AttackPunch.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttackPunch;
+                @AttackPunch.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttackPunch;
+                @AttackPunch.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttackPunch;
+                @Walk.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnWalk;
+                @Walk.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnWalk;
+                @Walk.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnWalk;
+                @AttackKick.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttackKick;
+                @AttackKick.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttackKick;
+                @AttackKick.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttackKick;
+                @AttackRanged.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttackRanged;
+                @AttackRanged.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttackRanged;
+                @AttackRanged.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttackRanged;
+                @Block.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBlock;
+                @Block.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBlock;
+                @Block.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBlock;
+                @Duck.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDuck;
+                @Duck.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDuck;
+                @Duck.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDuck;
+                @Jump.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
+                @Jump.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
+                @Jump.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
+                @TurnAway.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTurnAway;
+                @TurnAway.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTurnAway;
+                @TurnAway.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTurnAway;
             }
-            m_Wrapper.m_Player1ActionsCallbackInterface = instance;
+            m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
             {
                 @AttackPunch.started += instance.OnAttackPunch;
@@ -452,8 +452,8 @@ public class @PlayerController : IInputActionCollection, IDisposable
             }
         }
     }
-    public Player1Actions @Player1 => new Player1Actions(this);
-    public interface IPlayer1Actions
+    public PlayerActions @Player => new PlayerActions(this);
+    public interface IPlayerActions
     {
         void OnAttackPunch(InputAction.CallbackContext context);
         void OnWalk(InputAction.CallbackContext context);

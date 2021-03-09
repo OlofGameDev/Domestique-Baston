@@ -33,7 +33,7 @@ public class CharacterController2D : MonoBehaviour
 
 	public float life = 10f; //Life of the player
 	public bool invincible = false; //If player can die
-	private bool canMove = true; //If player can move
+	public bool canMove = true; //If player can move
 
 	private Animator animator;
 	public ParticleSystem particleJumpUp; //Trail particles
@@ -49,11 +49,13 @@ public class CharacterController2D : MonoBehaviour
 	/// Custom vars
 	/// </summary>
 	/// 
-	public KeyCode revertFlipKey = KeyCode.E, duckKey = KeyCode.F, blockKey = KeyCode.Q;
 	[ HideInInspector] public bool airborn = false;
-	public Transform opponent;
+	public Transform opponent ;
+	public int player = 1;
 
 	public bool isReverting;
+
+	public ParticleSystem[] rangedPS;
 
 	[Header("Events")]
 	[Space]
@@ -64,10 +66,34 @@ public class CharacterController2D : MonoBehaviour
 	[System.Serializable]
 	public class BoolEvent : UnityEvent<bool> { }
 
+	private void OnPlayerJoined()
+    {
+		GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+		foreach (GameObject g in players)
+		{
+			if (g.transform != this.transform)
+			{
+				opponent = g.transform;
+				g.transform.GetComponent<CharacterController2D>().opponent = transform;
+			}
+		}
+		if (opponent == null) opponent = GameObject.FindGameObjectWithTag("DummyOpponent").transform;
+		// Set the player to the correct int
+		player = playerInput.user.index + 1;
+
+		// Set the player to the correct spawn-position
+		GameManager.master.SetPlayer(transform);
+
+		// Add this player to the rescale script
+		RescaleScript rescaleScript = GameObject.Find("ScriptHolder").GetComponent<RescaleScript>();
+		rescaleScript.playerSprites.Add(transform);
+		rescaleScript.ScaleAll();
+	}
 	private void Awake()
 	{
 		m_Rigidbody2D = GetComponent<Rigidbody2D>();
 		animator = GetComponent<Animator>();
+		playerInput = GetComponent<PlayerInput>();
 
 		if (OnFallEvent == null)
 			OnFallEvent = new UnityEvent();
@@ -75,7 +101,11 @@ public class CharacterController2D : MonoBehaviour
 		if (OnLandEvent == null)
 			OnLandEvent = new UnityEvent();
 	}
-	void Update()
+    private void Start()
+    {
+		OnPlayerJoined();
+	}
+    void Update()
     {
 		// Set animation blends
 		// Playeris airborn (jumping or falling)
@@ -100,7 +130,8 @@ public class CharacterController2D : MonoBehaviour
 		// Was the player grounded last frame?
 		bool wasGrounded = m_Grounded;
 		// Set this variable to false (temporarily)
-		m_Grounded = false;
+		if (canMove) m_Grounded = false;
+		else m_Grounded = true;
 
 		// The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
 		// This can be done using layers instead but Sample Assets will not overwrite your project settings.
@@ -192,16 +223,18 @@ public class CharacterController2D : MonoBehaviour
 				m_Rigidbody2D.velocity = Vector3.SmoothDamp(m_Rigidbody2D.velocity, targetVelocity, ref velocity, m_MovementSmoothing);
 
 				// Face the opponent (unless the revert button is pressed)
-				if (opponent.position.x > transform.position.x && !isWallSliding && (!m_FacingRight && !isReverting || m_FacingRight && isReverting))
+				if (opponent.position.x > transform.position.x && !isWallSliding)
 				{
+					if (!isReverting) Flip(true);
+					else Flip(false);
 					// ... flip the player.
-					Flip();
 				}
 				// Otherwise if the input is moving the player left and the player is facing right...
-				else if (opponent.position.x < transform.position.x && !isWallSliding && (m_FacingRight && !isReverting || !m_FacingRight && isReverting))
+				else if (opponent.position.x < transform.position.x && !isWallSliding)
 				{
 					// ... flip the player.
-					Flip();
+					if (!isReverting) Flip(false);
+					else Flip(true);
 				}
 			}
 			// If the player should jump...
@@ -241,7 +274,7 @@ public class CharacterController2D : MonoBehaviour
 				{
 					isWallSliding = true;
 					m_WallCheck.localPosition = new Vector3(-m_WallCheck.localPosition.x, m_WallCheck.localPosition.y, 0);
-					Flip();
+					//Flip();
 					StartCoroutine(WaitToCheck(0.1f));
 					canDoubleJump = true;
 					animator.SetBool("IsWallSliding", true);
@@ -298,15 +331,30 @@ public class CharacterController2D : MonoBehaviour
 	}
 
 
-	public void Flip()
+	public void Flip(bool right)
 	{
 		// Switch the way the player is labelled as facing.
-		m_FacingRight = !m_FacingRight;
+		m_FacingRight = right;
 
 		// Multiply the player's x local scale by -1.
 		Vector3 theScale = transform.localScale;
-		theScale.x *= -1;
+		theScale.x = right ? Mathf.Abs(theScale.x) : -Mathf.Abs(theScale.x);
 		transform.localScale = theScale;
+
+		if(right)
+        {
+			foreach(ParticleSystem p in rangedPS)
+            {
+				p.transform.localScale = new Vector3(1, 1, 1);
+            }
+        }
+		else
+        {
+			foreach (ParticleSystem p in rangedPS)
+			{
+				p.transform.localScale = new Vector3(-1, 1, 1);
+			}
+		}
 	}
 
 	public void ApplyDamage(float damage, Vector3 position) 
