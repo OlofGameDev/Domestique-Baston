@@ -14,6 +14,8 @@ public class RescaleScript : MonoBehaviour
     public RectTransform player1Stats, player2Stats;
     [Tooltip("The canvas (or parent) of the player1Stats and player2Stats")]
     public RectTransform canvasRect;
+    [Tooltip("The min and max start size for a character with scale 1. Will be scaled.")]
+    public Vector2 startSizeParticles = new Vector2(1.8f, 2f);
 
     private Vector2 screenSizeLastFrame;
     private SpriteRenderer referenceSprite;
@@ -39,7 +41,16 @@ public class RescaleScript : MonoBehaviour
         referenceObject.localScale = Vector3.one * width;
         for (int i = 0; i < playerSprites.Count; i++)
         {
-                playerSprites[i].localScale = Vector3.one * width * scaleRatioToReferenceSprite;
+            playerSprites[i].localScale = Vector3.one * width * scaleRatioToReferenceSprite;
+            ParticleSystem[] insults = playerSprites[i].GetComponentsInChildren<ParticleSystem>();
+            PlayerMovement PM = playerSprites[i].GetComponent<PlayerMovement>();
+            PM.scaledSpeed = PM.runSpeed * referenceObject.localScale.x; 
+            foreach (ParticleSystem p in insults)
+            {
+                var main = p.main;
+                main.startSize = 0.04f * referenceObject.localScale.x; //new ParticleSystem.MinMaxCurve(startSizeParticles.x * playerSprites[i].localScale.x, startSizeParticles.y * playerSprites[i].localScale.x);
+                main.startSpeed = .33f * referenceObject.localScale.x;
+            }
         }
 
         SetAnchorStats(player1Stats, 1);

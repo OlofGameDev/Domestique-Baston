@@ -79,7 +79,15 @@ public class Health : MonoBehaviour
             }
             else currentHealth -= value;
             // Make sure health doesn't go below 0
-            if (currentHealth < 0) currentHealth = 0;
+            if (currentHealth <= 0)
+            {
+                currentHealth = 0;
+                animator.SetBool("IsDead", true);
+                controller.canMove = false;
+                GetComponent<Attack>().canAttack = false;
+                controller.m_Rigidbody2D.isKinematic = true;
+                GetComponent<Collider2D>().enabled = false;
+            }
             // Set the new fill amount
             fillImage.fillAmount = currentHealth / maxHealth;
             // If player is not already in the hit animation, play the hit animation
@@ -90,6 +98,9 @@ public class Health : MonoBehaviour
     {
         currentHealth = maxHealth;
         fillImage.fillAmount = currentHealth / maxHealth;
+        controller.m_Rigidbody2D.isKinematic = false;
+        GetComponent<Collider2D>().enabled = true;
+        animator.SetBool("IsDead", false);
     }
     public void SetBlock(BoolReplacement value)
     {

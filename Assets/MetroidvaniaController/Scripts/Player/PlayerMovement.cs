@@ -11,6 +11,7 @@ public class PlayerMovement : MonoBehaviour {
 	private Rigidbody2D RB;
 
 	public float runSpeed = 40f;
+	public float scaledSpeed;
 
 	[HideInInspector] public bool canFlip = true;
 
@@ -22,6 +23,7 @@ public class PlayerMovement : MonoBehaviour {
     private void Awake()
     {
 		RB = GetComponent<Rigidbody2D>();
+		scaledSpeed = runSpeed;
     }
     //bool dashAxis = false;
     #region Called by input system
@@ -59,7 +61,7 @@ public class PlayerMovement : MonoBehaviour {
     void Update () {
 		if (controller == null) return;
 		if (!controller.canMove) return;
-		horizontalMove = m_Move.x * runSpeed;
+		horizontalMove = m_Move.x * scaledSpeed;
 
 		/* Old duck and jump
 		// If player is moving up, is grounded: jump is true
@@ -96,11 +98,12 @@ public class PlayerMovement : MonoBehaviour {
 				horizontalMove *= .7f;
 			}
 		}
+		animatorBlendValue /= scaledSpeed;
 		float currentBlendValue = animator.GetFloat("Speed");
 		// If player is changing direction, start blending from 0. Otherwise it will look wierd if player is walking forward and then switch to walking backwards (Forward animation would blend to idle and then to backwards)
 		if (currentBlendValue > 0 && animatorBlendValue < 0 || currentBlendValue < 0 && animatorBlendValue > 0) currentBlendValue = 0;
 		// Get a new blend value
-		float newBlendValue = Mathf.MoveTowards(currentBlendValue, animatorBlendValue, 50 * Time.deltaTime);
+		float newBlendValue = Mathf.MoveTowards(currentBlendValue, animatorBlendValue, 4 * Time.deltaTime);
 		animator.SetFloat("Speed", newBlendValue);
 		// Set block and duck to false if the player moves (break out of the duck/block)
 		if (horizontalMove != 0)
